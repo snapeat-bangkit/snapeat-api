@@ -10,10 +10,17 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT;
 
-
-app.use('/auth', UserRoute);
+app.use('/user', UserRoute);
 app.use('/posts', PostRoute);
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);
+});
+
+db.connect((err) => {
+  if (err) {
+    console.error('Error connecting to the database:', err);
+    return;
+  }
+  console.log('Connected to the database');
 });
