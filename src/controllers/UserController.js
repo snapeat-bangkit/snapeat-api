@@ -1,25 +1,31 @@
-import db from '../connection.js';
+import { auth } from '../db.js';
 
-const getUsers = (req, res) => {
-  db.query('SELECT * FROM user', (err, results) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    res.json(results);
-  });
+export const registerUser = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const userCredential = await auth.createUserWithEmailAndPassword(
+      email,
+      password
+    );
+    const user = userCredential.user;
+    res.status(201).json({ message: 'User registered successfully', user });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 };
 
-const getUserByName = (req, res) => {
-    const userName = req.params.username;
-    db.query('SELECT * FROM user WHERE username = ?', [userName], (err, results) => {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-        if (results.length === 0) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-        res.json(results[0]);
-    });
-};
+export const loginUser = async (req, res) => {
+  const { email, password } = req.body;
 
-export default { getUsers, getUserByName };
+  try {
+    const userCredential = await auth.signInWithEmailAndPassword(
+      email,
+      password
+    );
+    const user = userCredential.user;
+    res.status(200).json({ message: 'User logged in successfully', user });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};

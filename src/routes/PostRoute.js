@@ -1,8 +1,17 @@
+// routes/postRoute.js
 import express from 'express';
-const router = express.Router();
+import multer from 'multer';
+import {
+  createNewPost,
+  likePost,
+  commentOnPost,
+} from '../controllers/PostController.js';
 
-router.get('/', async (req, res) => {
-  res.send('Post Page');
-});
+const postRouter = express.Router();
+const upload = multer({ storage: multer.memoryStorage() });
 
-export default router;
+postRouter.post('/', upload.single('image'), createNewPost);
+postRouter.post('/:postId/like', likePost);
+postRouter.post('/:postId/comment', commentOnPost);
+
+export default postRouter;
