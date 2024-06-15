@@ -18,5 +18,5 @@ app.use('/users', userRouter);
 app.use('/posts', postRouter);
 
 app.listen(config.port, () =>
-  console.log('App is listening on url http://localhost:' + config.port)
+  console.log('Listening on url http://localhost:' + config.port)
 );

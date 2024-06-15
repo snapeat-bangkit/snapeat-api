@@ -1,4 +1,4 @@
-// controllers/postController.js
+import {firestore} from '../db.js'
 import {
   createPost,
   getPostById,
@@ -29,6 +29,19 @@ export const createNewPost = async (req, res) => {
     };
 
     const postId = await createPost(post);
+
+    await firestore
+      .collection('users')
+      .doc(userId)
+      .collection('posts')
+      .doc(postId)
+      .set({
+        postId,
+        content,
+        imageUrl: imageUpload.publicUrl(),
+        createdAt: new Date().toISOString(),
+      });
+
     res.status(201).json({ message: 'Post created successfully', postId });
   } catch (error) {
     res.status(400).json({ message: error.message });

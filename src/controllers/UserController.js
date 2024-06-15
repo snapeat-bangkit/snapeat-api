@@ -1,4 +1,4 @@
-import { auth } from '../db.js';
+import { auth, firestore } from '../db.js';
 
 export const registerUser = async (req, res) => {
   const { email, password } = req.body;
@@ -9,6 +9,12 @@ export const registerUser = async (req, res) => {
       password
     );
     const user = userCredential.user;
+
+    await firestore.collection('users').doc(user.uid).set({
+      email: user.email,
+      createdAt: new Date().toISOString(),
+    });
+    
     res.status(201).json({ message: 'User registered successfully', user });
   } catch (error) {
     res.status(400).json({ message: error.message });
