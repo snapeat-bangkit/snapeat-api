@@ -14,7 +14,6 @@ export const getPostById = async (postId) => {
 };
 
 export const addLikeToPost = async (postId, likingUserId) => {
-  // Rename the parameter to avoid conflict
   const postRef = postsCollection.doc(postId);
   const postDoc = await postRef.get();
   if (!postDoc.exists) {
