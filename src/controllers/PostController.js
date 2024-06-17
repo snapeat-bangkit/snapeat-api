@@ -1,15 +1,10 @@
-import {firestore} from '../db.js'
-import {
-  createPost,
-  getPostById,
-  addLikeToPost,
-  addCommentToPost,
-} from '../models/PostModel.js';
+import { firestore } from '../db.js';
+import { createPost, addLikeToPost } from '../models/PostModel.js';
 import { storage } from '../db.js';
 import { v4 as uuidv4 } from 'uuid';
 
 export const createNewPost = async (req, res) => {
-  const { userId, content } = req.body;
+  const { userId, caption } = req.body;
   const image = req.file;
 
   try {
@@ -21,26 +16,30 @@ export const createNewPost = async (req, res) => {
 
     const post = {
       userId,
-      content,
+      caption,
       imageUrl: imageUpload.publicUrl(),
       likes: [],
-      comments: [],
+      likeCount: 0,
       createdAt: new Date().toISOString(),
     };
 
     const postId = await createPost(post);
+
+    const userPost = {
+      postId,
+      caption,
+      imageUrl: imageUpload.publicUrl(),
+      likes: [],
+      likeCount: 0,
+      createdAt: new Date().toISOString(),
+    };
 
     await firestore
       .collection('users')
       .doc(userId)
       .collection('posts')
       .doc(postId)
-      .set({
-        postId,
-        content,
-        imageUrl: imageUpload.publicUrl(),
-        createdAt: new Date().toISOString(),
-      });
+      .set(userPost);
 
     res.status(201).json({ message: 'Post created successfully', postId });
   } catch (error) {
@@ -55,24 +54,6 @@ export const likePost = async (req, res) => {
   try {
     await addLikeToPost(postId, userId);
     res.status(200).json({ message: 'Post liked successfully' });
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};
-
-export const commentOnPost = async (req, res) => {
-  const { postId } = req.params;
-  const { userId, comment } = req.body;
-
-  try {
-    const commentData = {
-      userId,
-      comment,
-      createdAt: new Date().toISOString(),
-    };
-
-    await addCommentToPost(postId, commentData);
-    res.status(200).json({ message: 'Comment added successfully' });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
