@@ -1,5 +1,9 @@
 import { auth } from '../db.js';
-import { createUser, getUserByUsername } from '../models/UserModel.js';
+import {
+  createUser,
+  getUserByUsername,
+  addFriend,
+} from '../models/UserModel.js';
 
 export const registerUser = async (req, res) => {
   const { email, password, username } = req.body;
@@ -43,6 +47,18 @@ export const searchByUsername = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
     res.status(200).json({ user });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+export const addFriendToUser = async (req, res) => {
+  const { userId } = req.body;
+  const { friendId } = req.params;
+
+  try {
+    await addFriend(userId, friendId);
+    res.status(200).json({ message: 'Friend added successfully' });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

@@ -1,4 +1,3 @@
-// routes/postRoute.js
 import express from 'express';
 import multer from 'multer';
 import { createNewPost, likePost } from '../controllers/PostController.js';

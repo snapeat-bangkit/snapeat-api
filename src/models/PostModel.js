@@ -1,4 +1,3 @@
-// models/PostModel.js
 import { firestore, admin } from '../db.js';
 
 const postsCollection = firestore.collection('posts');
@@ -15,7 +14,6 @@ export const getPostById = async (postId) => {
 };
 
 export const addLikeToPost = async (postId, likingUserId) => {
-  // Rename the parameter to avoid conflict
   const postRef = postsCollection.doc(postId);
   const postDoc = await postRef.get();
   if (!postDoc.exists) {
@@ -23,7 +21,7 @@ export const addLikeToPost = async (postId, likingUserId) => {
   }
 
   const post = postDoc.data();
-  const postOwnerId = post.userId; // Rename the variable to avoid conflict
+  const postOwnerId = post.userId;
 
   const userPostRef = firestore
     .collection('users')
