@@ -7,6 +7,7 @@ export const createUser = async (uid, email, username) => {
     email: email,
     username: username,
     friendCount: 0,
+    bookmarkCount: 0,
     createdAt: new Date().toISOString(),
   });
 };
@@ -58,6 +59,12 @@ export const addFriend = async (userId, friendId) => {
   });
 
   await batch.commit();
+};
+
+export const updateBookmarkCount = async (userId, increment) => {
+  await usersCollection.doc(userId).update({
+    bookmarkCount: admin.firestore.FieldValue.increment(increment ? 1 : -1),
+  });
 };
 
 export const updateUser = async (uid, data) => {
